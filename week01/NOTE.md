@@ -30,6 +30,7 @@
 ```
 
 5. 编写一个快速排序代码，并且用动画演示它的过程。
+[冒泡排序code](https://github.com/coocoonancy/Frontend-01-Template/blob/master/week01/BubbleSorting/index.html)
 
 ###### 04.09
 
