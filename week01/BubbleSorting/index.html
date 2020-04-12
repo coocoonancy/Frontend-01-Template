@@ -66,7 +66,7 @@
         <div class="alert alert-info" role="alert">提示：刷新页面，可重新进行排序。</div>
     </div>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://github.com/GeekUniversity/Frontend-01-Template/tree/master/week01/Bubble Sorting/jquery.swap.js"></script>
+<script src="https://github.com/GeekUniversity/Frontend-01-Template/tree/master/week01/BubbleSorting/jquery.swap.js"></script>
 <script>
 	$(function () {
 		var $lis = $("#myList li");
@@ -82,9 +82,10 @@
 			$($lis[next]).addClass('active');
 		}
 		function exchange() {
-            var v1 = $($lis[current]).text();
-            var v2 = $($lis[next]).text();
-			if (val1 > val2) {
+            $lis = $("#myList li");
+            var val1 = $($lis[current]).text();
+            var val2 = $($lis[next]).text();
+			if (parseInt(val1) > parseInt(val2)) {
              	$lis.swap(current, next);
                 return true;
 			}
@@ -94,43 +95,45 @@
 			if (times === 0) {
 				return;
 			}
+            $lis = $("#myList li");
             var str = "第"+ times + "趟：<ul>";
             str += $("#myList").html();
-            str += str += "</ul>";
+            str += "</ul>";
 			$('#mid-data').append(str);
 		}
 		function go() {
 			setCss();
-			interval = setInterVal(function() {
-				if (pause) {
-	                return;
-	            }
-	            if (times < count - 1) {
-	            	var change = exchange(); 
-	            	if (!change) {
-	            		current++;
+            interval = setInterval(function () {
+                if (pause) {
+                    return;
+                }
+                if(times < count -1) {
+                    var change = exchange();
+                    if (!change) {
+                        current++;
                         next++;
-                        if (current === count - 1 - times) {
-                        	current = 0;
+                        if (current == count - 1 - times) {
+                            times++;
+                            current = 0;
                             next = 1;
-                        	times++;
-                        	drawData();
+                            drawData();
                         }
-	            	}   	
-				} else {
-					$lis.removeClass('active');
-					clearInterval(interval);
-				}
-			}, 1000)
+                        setCss();
+                    }
+                } else {
+                    $lis.removeClass("active");
+                    clearInterval(interval);
+                }
+            },1000);
 		}
-		$('start-btn').click(function() {
+		$('#start-btn').click(function() {
 			pause = false;
 			if (!interval) {
 				drawData();
 				go();
 			}
 		})
-		$('start-btn').click(function() {
+		$('#pause-btn').click(function() {
 			pause = true;
 		})
 	})
