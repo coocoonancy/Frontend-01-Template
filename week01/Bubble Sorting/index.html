@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <style>
+        <style>
+        #mid-data ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        #mid-data ul li {
+            display: inline-block;
+            padding: 2px 4px;
+            margin: 2px;
+            border: 1px solid #000;
+        }
+        #myList {
+            list-style: none;
+            padding-left: 0;
+            font-size: 20px;
+        }
+        #myList li {
+            display: inline-block;
+            padding: 6px 10px;
+            margin: 4px;
+            border: 2px solid #000;
+        }
+        #myList .active {
+            border:2px solid #ff0000;
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>冒泡排序动画演示</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">过程演示</h2>
+            <ul id="myList">
+            <li>97</li>
+            <li>68</li>
+            <li>72</li>
+            <li>29</li>
+            <li>51</li>
+            <li>45</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-lg" id="start-btn">开始演示</button> 
+            <button type="button" class="btn btn-primary btn-lg" id="pause-btn">暂停演示</button> 
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header">中间数据</h2>
+            <div id="mid-data">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="alert alert-info" role="alert">提示：刷新页面，可重新进行排序。</div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://github.com/GeekUniversity/Frontend-01-Template/tree/master/week01/Bubble Sorting/jquery.swap.js"></script>
+<script>
+	$(function () {
+		var $lis = $("#myList li");
+		var current = 0;
+		var next = 1;
+		var count = $lis.length;
+		var times = 0;
+		var interval;
+		var pause = false;
+		function setCss() {
+			$lis.removeClass('active');
+			$($lis[current]).addClass('active');
+			$($lis[next]).addClass('active');
+		}
+		function exchange() {
+            var v1 = $($lis[current]).text();
+            var v2 = $($lis[next]).text();
+			if (val1 > val2) {
+             	$lis.swap(current, next);
+                return true;
+			}
+			return false;
+		}
+		function drawData() {
+			if (times === 0) {
+				return;
+			}
+            var str = "第"+ times + "趟：<ul>";
+            str += $("#myList").html();
+            str += str += "</ul>";
+			$('#mid-data').append(str);
+		}
+		function go() {
+			setCss();
+			interval = setInterVal(function() {
+				if (pause) {
+	                return;
+	            }
+	            if (times < count - 1) {
+	            	var change = exchange(); 
+	            	if (!change) {
+	            		current++;
+                        next++;
+                        if (current === count - 1 - times) {
+                        	current = 0;
+                            next = 1;
+                        	times++;
+                        	drawData();
+                        }
+	            	}   	
+				} else {
+					$lis.removeClass('active');
+					clearInterval(interval);
+				}
+			}, 1000)
+		}
+		$('start-btn').click(function() {
+			pause = false;
+			if (!interval) {
+				drawData();
+				go();
+			}
+		})
+		$('start-btn').click(function() {
+			pause = true;
+		})
+	})
+</script>
+</body>
+</html>
