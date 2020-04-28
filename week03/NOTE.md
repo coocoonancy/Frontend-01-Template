@@ -32,6 +32,71 @@ Math.prototype ==> Object.prototype ==> null // Math不是构造函数也是Obje
 
 ###### 0421
 1. 根据课上讲师已写好的部分，补充写完函数 convertStringToNumber 以及函数 convertNumberToString
+```
+function convertStringToNumber(string, x) {
+    if (typeof string !== 'string') {
+        return '不是字符串';
+    }
+    if (string.trim === '') {
+        return 0;
+    }
+    var rexp = (x == 10) ? /(-?)([0]?)([0-9]+)/ : /(-?)([0]?[Xx]?)([0-9a-fA-F]+)/,
+    a = string.match(rexp),
+    sign = a[1],
+    rawx = a[2],
+    rawNum = a[3],
+    num = 0,
+    numArr = [],
+    result = 0,
+    chars = rawNum.split('');
+    if (a && !x) {
+        if ( rawx.toUpperCase() === "0X") {
+            x = 16;
+        } else if (rawx === "0") {
+            x = 8;
+        } else {
+            x = 10;
+        }
+    }
+    for (var i = 0; i < chars.length; i++) {
+        var num;
+        var charCode = chars[i].toUpperCase().charCodeAt(0);
+        if(x <= 36 && x >= 11) {
+            if (charCode >= 65 && charCode <= 90) {
+                num = charCode - 55;
+            } else {
+                num = charCode - 48;
+            }
+        }  else {
+            num = charCode - 48;
+        }
+        if (num < x) {
+            numArr.push(num);
+        } else {
+            return NaN
+        };    
+    }
+    if(numArr.length > 0) {
+      numArr.forEach(function(item, j){
+          result  += item * Math.pow(x, numArr.length - j - 1);
+      })
+    }
+    if(sign === "-"){
+      result = -result;
+    }
+    return result;
+}
+function convertNumberToString(number, x) {
+    var integer = Math.floor(number);
+    var fraction = number - integer;
+    var string = '';
+    while(interger > 0) {
+        string = String(integer % x) + string;
+        integer = Math.floor(integer / x);
+    }
+    return string
+}
+```
 
 ##### 随堂作业
 ```
