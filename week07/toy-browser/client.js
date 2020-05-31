@@ -1,7 +1,7 @@
 const net = require('net');
-// const parser = require('./parser.js');
-// const render = require('./render.js');
-// const images = require('images');
+const parser = require('./parser.js');
+const render = require('./render.js');
+const images = require('images');
 
 class Request {
     constructor(options) {
@@ -81,7 +81,7 @@ class ResponseParser {
     }
     receive(str) {
         for (let i = 0; i < str.length; i++) {
-            console.log('str', str.charAt(i));
+            // console.log('str', str.charAt(i));
             this.receiveChar(str.charAt(i));
         }
     }
@@ -199,6 +199,10 @@ void (async function() {
         }
     });
     let res = await req.send();
+    let dom = parser.parseHTML(res);
+    let viewport = images(800, 600);
+    render(viewport, dom);
+    viewport.save('viewport.jpg');
     console.log('res', res);
 })();
 // const client = net.createConnection({
