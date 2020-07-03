@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wildcard</title>
+</head>
+<body>
+    <script>
+        function find(source, patten) {
+            let startCount = 0;
+            for (let i = 0; i < patten.length; i++) {
+                if (patten[i] === '*') {
+                    startCount++;
+                }
+            }
+            if (startCount === 0) {
+                for (let i = 0; i < patten.length; i++) {
+                    if (patten[i] !== source[i] && patten[i] !== '?') {
+                        return false;
+                    }
+                }
+                return;
+            }
+            let i = 0;
+            let lastIndex = 0;
+            for (i = 0; patten[i] !== '*'; i++) {
+                if (patten[i] !== source[i] && patten[i] !== '?') {
+                    return false;
+                }
+            }
+            lastIndex = i;
+            for (let p = 0; p < startCount - 1; p++) {
+                i++;
+                let sub = '';
+                while (patten[i] !== '*') {
+                    sub += patten[i];
+                    i++;
+                }
+                let reg = new RegExp(sub.replace(/\?/,"[\\s\\S]"), 'g');
+                reg.lastIndex = lastIndex;
+                reg.exec(source);
+                // console.log(reg.exec(source));
+                lastIndex = reg.lastIndex;
+                console.log(sub.replace(/\?/,"[\\s\\S]"));
+            }
+            for (let j = 0; j < source.length - lastIndex && patten[patten.length - j] !== '*'; j++) {
+                if (patten[patten.length - j] !== source[source.length - j] && patten[patten.length - j] !== '?') {
+                    return false
+                }
+            }
+            return true;
+        }
+        find('abcabcabx', 'a*b*bx');
+        find('abcabcabx', 'a*b*bx*c');
+        find('abcabcabx', 'a*b*?x*c');
+        find('abcabcabxaac', 'a*b*bx*c');
+    </script>
+</body>
+</html>

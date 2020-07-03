@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMP</title>
+</head>
+<body>
+    <script>
+        function find(source, patten) {
+            let table = new Array(patten.length).fill(0);
+            let k = 0;
+            for (let j = 1; j < patten.length; j++) {
+                if (patten[j] === patten[k]) k++;
+                else k = 0;
+                table[j] = k;
+            }
+            let j = 0;
+            for (let i = 0; i < source.length; i++) {
+                if (source[i] === patten[j]) {
+                    j++;
+                } else {
+                    
+                    while(source[i] !== patten[j] && j > 0) {
+                        j = table[j - 1];
+                    }
+                    if (source[i] === patten[j]) {
+                        j++;
+                    } else {
+                        j = 0;
+                    }
+                    // j = table[j - 1];
+                    // if (source[i] === patten[j]) {
+                    //     j++;
+                    // } else {
+                    //     j = 0;
+                    // }
+                }
+                if (j === patten.length) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        find('abcababcabx', 'abcabx');
+        find('abcabcabx', 'abcabx');
+    </script>
+</body>
+</html>
