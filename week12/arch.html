@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>regexp</title>
+</head>
+<body>
+    <script>
+        let regexp = /([0-9\.]+)|(\r\n]+)|([ \t\r\n]+)|(\*)|(\/)|(\-)|(\+)/g;
+        let dict = ['Number', 'WhiteSpace', 'Linetermination', '*', '/', '-', '+'];
+        function* tokenize(str) {
+            var result = null;
+            var lastIndex = 0;
+            do {
+                lastIndex = regexp.lastIndex; 
+                result = regexp.exec(str);
+                if (!result) {
+                    break;
+                }
+                if (regexp.lastIndex - lastIndex > result[0].length) {
+                    throw new Error("Uexpected token \"" + str.slice(lastIndex, regexp.lastIndex - result[0].length) + "\"!")
+                }
+                let token = {
+                    type: null,
+                    value: null
+                }
+                for (let i = 0; i < dict.length; i++) {
+                    if (result[i + 1]) token.type = dict[i];
+                }
+                token.value = result[0];
+                yield token;
+            } while(result)
+            yield { type: 'EOF' };
+        }
+        let source = [];
+        function expression(source) {
+        if (source[0].type === 'addExpression' && source[1].type === 'EOF') {
+                let node = {
+                    type: 'expression',
+                    children: [source.shift(), source.shift()]
+                }
+                source.unshift(node);
+                return node;
+            }
+
+            addExpression(source);
+            return expression(source);
+        }
+
+        function addExpression(source) {
+            if (!Array.isArray(source)) { return null }
+            if (source[0].type === 'Number') {
+                MultiExpression(source);
+                return addExpression(source);
+            }
+
+            if (source[0].type === 'MultiExpression') {
+                let node = {
+                    type: 'addExpression',
+                    children: [source.shift()],
+                }
+                source.unshift(node);
+                return addExpression(source);
+            }
+
+            if (source[0].type === 'addExpression' && source.length > 1 &&
+                source[1].type === '+') {
+                let node = {
+                    type: 'addExpression',
+                    children: [source.shift(), source.shift()],
+                }
+                MultiExpression(source);
+                node.children.push(source.shift());
+                source.unshift(node);
+                return addExpression(source);
+            }
+
+            if (source[0].type === 'addExpression' && source.length > 1 &&
+                source[1].type === '-') {
+                let node = {
+                    type: 'addExpression',
+                    children: [source.shift(), source.shift()],
+                }
+                MultiExpression(source);
+                node.children.push(source.shift());
+                source.unshift(node);
+                return addExpression(source);
+            }
+            if (source[0].type === 'addExpression') {
+                return source[0];
+            }
+            throw new Error();
+
+        }
+        function MultiExpression(source = []) {
+            if (!Array.isArray(source)) { return null }
+            if (source[0].type === 'Number') {
+                let node = {
+                    type: 'MultiExpression',
+                    children: source.shift(),
+                }
+                source.unshift(node);
+                return MultiExpression(source);
+            }
+
+            if (source[0].type === 'MultiExpression' && source.length > 1 &&
+                source[1].type === '*') {
+                let node = {
+                    type: 'MultiExpression',
+                    children: [source.shift(), source.shift(), source.shift()],
+                }
+                source.unshift(node);
+                return MultiExpression(source);
+            }
+
+            if (source[0].type === 'MultiExpression' && source.length > 1 &&
+                source[1].type === '/') {
+                let node = {
+                    type: 'MultiExpression',
+                    children: [source.shift(), source.shift(), source.shift()],
+                }
+                source.unshift(node);
+                return MultiExpression(source);
+            }
+            if (source[0].type === 'MultiExpression') {
+                return source[0];
+            }
+            throw new Error();
+        }
+        for (let token of tokenize('1024 + 1 * 20')) {
+                if (token.type !== 'WhiteSpace' && token.type !== 'Linetermination') {
+                    source.push(token)
+                }
+        }
+        console.log(expression(source));                           
+    </script>
+</body>
+</html>

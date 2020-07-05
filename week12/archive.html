@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>regexp</title>
+</head>
+<body>
+    <script>
+        let regexp = /([0-9\.]+)|([\r\n]+)|([ \t\r\n]+)|(\/)|(\-)|(\+)|(\*)/g;
+        let dict = ['Number', 'WhiteSpace', 'Linetermination', '/', '-', '+', '*'];
+        function* tokenize(str) {
+            var result = null;
+            var lastIndex = 0;
+            do {
+                lastIndex = regexp.lastIndex; 
+                result = regexp.exec(str);
+                if (!result) {
+                    break;
+                }
+                let token = {
+                    type: null,
+                    value: null
+                }
+                // console.log(lastIndex, regexp.lastIndex, result, result.length, result[0]);
+                for (let i = 0; i < dict.length; i++) {
+                    if (result[i + 1]) token.type = dict[i];
+                    // console.log(dict[i ++ 1]);   
+                }
+                token.value = result[0];
+                yield token;
+            } while(result)
+        }
+        for (let token of tokenize('1024 + 1 * 20')) {
+            console.log(token);
+        }
+    </script>
+</body>
+</html>

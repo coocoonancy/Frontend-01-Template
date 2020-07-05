@@ -1,5 +1,13 @@
 # 每周总结可以写在这里
+
+###### 编程算法 | 四则运算
+[code](https://github.com/coocoonancy/Frontend-01-Template/tree/master/week12/arch.html)
+
 ###### 编程算法 | 字符串分析算法
+[code](https://github.com/coocoonancy/Frontend-01-Template/tree/master/week12/lr.html)
+[code](https://github.com/coocoonancy/Frontend-01-Template/tree/master/week12/kmp opt.html)
+[code](https://github.com/coocoonancy/Frontend-01-Template/tree/master/week12/wildcard.html)
+[code](https://github.com/coocoonancy/Frontend-01-Template/tree/master/week12/trie.html)
 
 ##### 字典树
  - 大量字符串完整模式匹配
