@@ -1,0 +1,17 @@
+<template>
+    <div>
+        <img />
+    </div>
+</template>
+<script>
+export default {
+    el: '#app',
+    data() {
+        msg: 'Hello World'
+    }
+}
+</script>
+
+<style>
+
+</style>
