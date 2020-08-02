@@ -1,0 +1,20 @@
+{
+  "name": "generator-nancy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "files": [
+    "app",
+    "router"
+  ],
+  "devDependencies": {
+    "yeoman-generator": "^4.11.0",
+    "yo": "^3.1.1"
+  },
+  "dependencies": {},
+  "description": ""
+}

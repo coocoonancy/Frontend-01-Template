@@ -1,5 +1,5 @@
 export function enableGesture(el) {
-    let ctxs = new Map();
+    let ctxs = Object.create(null);
     let MOUSE_SYMBOL = Symbol('mouse');
     el.addEventListener('mousedown', e => {
         ctxs[MOUSE_SYMBOL] = Object.create(null);
@@ -39,93 +39,96 @@ export function enableGesture(el) {
             delete ctxs[touch.identifier];
         }
     })
-    let start = (p, ctxs) => {
+    let start = (p, ctx) => {
         el.dispatchEvent(new CustomEvent('start', {
-            startX: ctxs.startX,
-            startY: ctxs.startY,
-            clientX: ctxs.clientX,
-            clientY: ctxs.clientY
+            startX: p.clientX,
+            startY: p.clientY,
+            clientX: p.clientX,
+            clientY: p.clientY
         }));
-        ctxs.startX = p.clientX, ctxs.startY = p.clientY;
-        ctxs.isPan = false;
-        ctxs.isTap = true;
-        ctxs.isPress = false;
-        ctxs.moves = [];
-        ctxs.timer = setTimeout(() => {
-            if(ctxs.isPan) return;
-            ctxs.isPan = false;
-            ctxs.isTap = false;
-            ctxs.isPress = true;
+        ctx.startX = p.clientX, ctx.startY = p.clientY;
+        ctx.isPan = false;
+        ctx.isTap = true;
+        ctx.isPress = false;
+        ctx.moves = [];
+        ctx.timer = setTimeout(() => {
+            if(ctx.isPan) return;
+            ctx.isPan = false;
+            ctx.isTap = false;
+            ctx.isPress = true;
             console.log('pressstart');
             el.dispatchEvent(Object.assign(new CustomEvent('pressstart'), {}));
         }, 500)
     }
-    let move = (p, ctxs) => {
-        let dx = p.clientX - ctxs.startX, dy = p.clientY - ctxs.startY;
-        if (ctxs.isPress) {
+    let move = (p, ctx) => {
+        let dx = p.clientX - ctx.startX, dy = p.clientY - ctx.startY;
+        if (ctx.isPress) {
             el.dispatchEvent(Object.assign(new CustomEvent('presscancel'), {}));
         }
-        if (dx ** 2 + dy ** 2 > 100 && !ctxs.pan) {
-            ctxs.isPan = true;
-            ctxs.isTap = false;
-            ctxs.isPress = false;
+        if (dx ** 2 + dy ** 2 > 100 && !ctx.isPan) {
+            ctx.isPan = true;
+            ctx.isTap = false;
+            ctx.isPress = false;
             console.log('panstart');
             el.dispatchEvent(Object.assign(new CustomEvent('panstart'), {
-                startX: ctxs.startX,
-                startY: ctxs.startY,
-                clientX: ctxs.clientX,
-                clientY: ctxs.clientY
+                startX: ctx.startX,
+                startY: ctx.startY,
+                clientX: p.clientX,
+                clientY: p.clientY
             }));
         }
-        ctxs.moves.push({
-            dx, dy, t: Date.now()
-        })
-        ctxs.moves = ctxs.moves.filter(r => Date.now() - r.t < 300);
-        if (ctxs.isPan) {
+        if (ctx.isPan) {
+            ctx.moves.push({
+                dx, dy, t: Date.now()
+            })
+            ctx.moves = ctx.moves.filter(r => Date.now() - r.t < 300);
             el.dispatchEvent(Object.assign(new CustomEvent('pan'), {
-                startX: ctxs.startX,
-                startY: ctxs.startY,
+                startX: ctx.startX,
+                startY: ctx.startY,
                 clientX: p.clientX,
                 clientY: p.clientY
             }));
             console.log('pan');
         }   
     }
-    let end = (p, ctxs) => {
-        if (ctxs.isPan) {
-            let dx = p.clientX - ctxs.startX, dy = p.clientY - ctxs.startY;
-            let r = ctxs.moves[0];
+    let end = (p, ctx) => {
+        if (ctx.isPan) {
+            let dx = p.clientX - ctx.startX, dy = p.clientY - ctx.startY;
+            let r = ctx.moves[0];
             let speed = Math.sqrt((r.dx - dx) ** 2 + (r.dy - dy) ** 2) / (Date.now() - r.t);
             console.log('panend');
             console.log(speed);
             if (speed > 2.5) {
                 el.dispatchEvent(Object.assign(new CustomEvent('flick'), {
-                    startX: ctxs.startX,
-                    startY: ctxs.startY,
-                    clientX: ctxs.clientX,
-                    clientY: ctxs.clientY,
+                    startX: ctx.startX,
+                    startY: ctx.startY,
+                    clientX: p.clientX,
+                    clientY: p.clientY,
                     speed: speed
                 }));
                 console.log('flick');
             }
+            el.dispatchEvent(Object.assign(new CustomEvent('panend'), {
+                startX: ctx.startX,
+                startY: ctx.startY,
+                clientX: p.clientX,
+                clientY: p.clientY,
+                speed: speed,
+                isFlick: speed - 2.5
+            }));
         };
-        el.dispatchEvent(Object.assign(new CustomEvent('panend'), {
-            startX: ctxs.startX,
-            startY: ctxs.startY,
-            clientX: p.clientX,
-            clientY: p.clientY
-        }));
-        if (ctxs.isTap) {
+        if (ctx.isTap) {
             el.dispatchEvent(Object.assign(new CustomEvent('tap'), {}));
             console.log('tap');
         }
-        if (ctxs.isPress) {
+        if (ctx.isPress) {
             el.dispatchEvent(Object.assign(new CustomEvent('pressend'), {}));
             console.log('pressend');
         }
-        clearTimeout(ctxs.timer);
+        clearTimeout(ctx.timer);
     }
-    let cancel = (p, ctxs) => {
-        clearTimeout(ctxs.timer);
+    let cancel = (p, ctx) => {
+        el.dispatchEvent(Object.assign(new CustomEvent('cancel'), {}));
+        clearTimeout(ctx.timer);
     }
 }

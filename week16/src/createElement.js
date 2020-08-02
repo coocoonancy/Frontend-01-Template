@@ -4,9 +4,7 @@ export function createElement(Com, attrs, ...childrens) {
     if (typeof Com === 'string') {
         o = new Wrapper(Com);
     } else {
-        o = new Com({
-            time: {}
-        });
+        o = new Com;
     }
     for (let attr in attrs) {
         o.setAttribute(attr, attrs[attr]);
@@ -41,6 +39,9 @@ export class Wrapper {
             enableGesture(this.root);
         }
     }
+    getAttribute(name) {
+        return this.root.getAttribute(name);
+    }
     appendChild(child) {
         this.children.push(child);
     }
@@ -49,6 +50,12 @@ export class Wrapper {
     }
     get style() {
         return this.root.style;
+    }
+    get classList() {
+        return this.root.classList;
+    }
+    set innerText(txt) {
+        return this.root.innerText = txt;
     }
     mountTo(parent) {
         parent.appendChild(this.root);
