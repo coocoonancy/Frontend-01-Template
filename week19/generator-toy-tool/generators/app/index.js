@@ -8,8 +8,18 @@ module.exports = class extends Generator {
         this.log('collecting');
     }
     creating() {
-        this.npmInstall(['lodash'], { 'save-dev': true });
-        
+        // this.npmInstall(['lodash'], { 'save-dev': true });
+        this.fs.copyTpl(
+            this.templatePath('package.json'),
+            this.destinationPath('package.json'),
+            { title: 'Templating with Yeoman' }
+        );
+        this.npmInstall([
+            'webpack',
+            'webpack-cli',
+            'webpack-dev-server',
+            '@babel/core'
+        ], { 'save-dev': true });
         this.fs.copyTpl(
             this.templatePath('index.html'),
             this.destinationPath('public/index.html'),
