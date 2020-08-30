@@ -12,3 +12,9 @@ npm start
 1. compress
 2. archiver
 
+##### git hooks
+ACL(用户访问控制权限)
+[Linux](https://www.howtogeek.com/437958/how-to-use-the-chmod-command-on-linux/)
+[ACL](https://www.cnblogs.com/Andy-Shi/p/11683753.html)
+
+
